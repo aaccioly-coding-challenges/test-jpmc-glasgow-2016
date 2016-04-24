@@ -4,14 +4,34 @@
 
 	<groupId>com.jpmorgan</groupId>
 	<artifactId>super-simple-stock-market</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
+
+    <name>Super Simple Stock Market</name>
+    <description>A simple system for trading in Global Beverage Corporation Exchange.</description>
+    <url>https://github.com/aaccioly/super-simple-stock-market</url>
+    <inceptionYear>2016</inceptionYear>
+
+    <developers>
+        <developer>
+            <name>Anthony Accioly</name>
+            <url>http://a.accioly.7rtc.com</url>
+        </developer>
+    </developers>
+
+    <scm>
+        <url>https://github.com/apache/maven-scm/tree/${project.scm.tag}</url>
+        <connection>scm:git:git@github.com:tobrien/git-demo.git</connection>
+        <developerConnection>scm:git:git@github.com:aaccioly/super-simple-stock-market.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
 
  
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
-		<guava.version>19.0</guava.version>
+
+        <guava.version>19.0</guava.version>
 		<lombok.version>1.16.8</lombok.version>
 		<slf4j.version>1.7.21</slf4j.version>
 
