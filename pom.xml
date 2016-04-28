@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.jpmorgan</groupId>
+	<artifactId>super-simple-stock-market</artifactId>
+	<version>0.2-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+    <name>Super Simple Stock Market</name>
+    <description>A simple system for trading in Global Beverage Corporation Exchange.</description>
+    <url>https://github.com/aaccioly/super-simple-stock-market</url>
+    <inceptionYear>2016</inceptionYear>
+
+    <developers>
+        <developer>
+            <name>Anthony Accioly</name>
+            <url>http://a.accioly.7rtc.com</url>
+        </developer>
+    </developers>
+
+    <scm>
+        <url>https://github.com/apache/maven-scm/tree/${project.scm.tag}</url>
+        <connection>scm:git:git@github.com:tobrien/git-demo.git</connection>
+        <developerConnection>scm:git:git@github.com:aaccioly/super-simple-stock-market.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+ 
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<java.version>1.8</java.version>
+
+        <guava.version>19.0</guava.version>
+		<lombok.version>1.16.8</lombok.version>
+		<slf4j.version>1.7.21</slf4j.version>
+
+		<surefire-plugin.version>2.19.1</surefire-plugin.version>
+		<testng.version>6.9.10</testng.version>
+		<assertj.version>3.4.1</assertj.version>
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${surefire-plugin.version}</version>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>${guava.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>${lombok.version}</version>
+			<scope>provided</scope>
+		</dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>${slf4j.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>${testng.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+			<version>${assertj.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+</project>
