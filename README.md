@@ -10,8 +10,10 @@ Restrictions and assumptions
 ----------------------------
 * Prices will be given in a single unspecified currency with 100 subunits
 * Minimum stock price is **0.01**
+* Minimum fixed dividend is **1%**
 * No fractional shares
-* Timestamps are given in machine time (i.e., [`Instant`][1]). The system is not timezone aware
+* P/E Ratio is based on past performance (i.e, on last dividend paid)
+* Timestamps are given in machine time (i.e., [`Instant`][1]); the system is not timezone aware
 * Trades represents committed orders and all prices are final
 * Trades will not be evicted from the history (i.e., history can contain trades older than 5 minutes)
 * Trades are written to the history more often than metrics are computed (i.e., system is optimized for writes)
@@ -23,8 +25,8 @@ Design guidelines
 
 ### 1. Immutable model
 
-Stocks and Trades are immutable by design. The system at this stage will not be multithreaded but immutability comes
-with highly desirable characteristics such as side effect free programming and simple reasoning about the code.
+Stocks and Trades are immutable by design. The system at this stage is not multithreaded but immutability comes with
+highly desirable characteristics such as side effect free programming and simple reasoning about the code.
 
 Mutable collections are still used sparingly and isolated (e.g., for the trades history).
 
@@ -37,10 +39,11 @@ lack of such a requirement inheritance seems like a natural way to design the mo
 [Open/Closed principle][3]. Special care is taken to follow the [Liskov Substitution Principle][4], plus encapsulation
 and patterns such as static factory methods are used to hide implementation details from the API.
 
+[![Class Diagram - Stocks][25]][25]
 On the other end of the spectrum it would not make much sense to apply inheritance for different types of `Trade` since
 in SSSM all trades behave the same. A `TradeType` enum discriminator is used instead.
 
-> TODO: include class diagram
+> TODO: include class diagram for trades
 
 ### 3. Services and Data
 
@@ -50,7 +53,7 @@ calculating Volume Weighted Stock price and the GBCE specific All Share Index.
 The data itself is written and retrieved using a in memory implementation of `StockRepository`. Internally a
 [MultiMap][6] stores trades for each kind of stock.
 
-> TODO: include class diagram
+> TODO: include class diagram for service and repository
 
 Finally, a geometric mean [`Collector`][7] is implemented as an alternative for a private or public static utility
 method in order to comply with the [Simple responsibility principle][8].
@@ -62,7 +65,7 @@ Decimal values are represented with [BigDecimal][9] instead of types like `doubl
 #### Precision and rounding policies:
 
 * Internal computations uses a precision of *30* digits
-* The fractional part of monetary results are scaled to the second digit
+* The fractional part of monetary and percentage results are scaled to the second digit
 * The fractional part of percentage results are scaled to the fifth digit
 
 [`ROUND_HALF_EVEN`][10] policy is used for rounding.
@@ -78,13 +81,13 @@ enterprise project may call for a different toolset than a self contained exerci
 
 Tools such as [Spring Boot][13] are able to bootstrap a production grade application with all the bells and whistles in
 a matter of minutes. Still, I feel that overengineering a toy project to emulate enterprise architecture defeats the
-purpose of the exercise. Thus, while I'm fully aware of the benefits that a IoC container, bean validation framework etc
-could bring to the project I've chosen to stick with a basic clean design.
+purpose of the exercise. Thus, while I'm fully aware of the benefits that IoC containers, a bean validation framework
+etc could bring to the project I've chosen to stick with a basic clean design.
 
 This does not mean ignoring tools altogether:
 
 * [Lombok][14] is used to reduce boilerplate code
-* [Guava][15] bring us that extra level of expressiveness with custom collections, preconditons, etc.
+* [Guava][15] bring us that extra level of expressiveness with custom collections, preconditions, etc.
 * [SLF4J][16] is used as lightweight logging facade loosely coupled to a [`java.util.logging`][17] implementation.
 
 
@@ -134,6 +137,7 @@ with Lombok.
 [23]: http://www.oracle.com/technetwork/java/javase/downloads/index.html
 [24]: https://projectlombok.org/download.html
 
+[25]: src/main/docs/images/stock_class_diagram.png
 
 
 
