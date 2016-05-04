@@ -20,7 +20,7 @@ public class StockTest {
     public void testCanCreateCommonStock() {
         final Stock commonStock = createCommonStock("COMM", new BigDecimal("10"), new BigDecimal("100"));
 
-        assertThat(commonStock).as("Stock type is common").isInstanceOf(CommonStock.class)
+        assertThat(commonStock).as("Stock type is common").isExactlyInstanceOf(CommonStock.class)
                 .as("Stock Symbol is COMM").hasFieldOrPropertyWithValue("symbol", "COMM")
                 .as("Last Dividend is 10.00").hasFieldOrPropertyWithValue("lastDividend", new BigDecimal("10.00"))
                 .as("Par value is 100.00").hasFieldOrPropertyWithValue("parValue", new BigDecimal("100.00"));
@@ -30,7 +30,7 @@ public class StockTest {
     public void testCanCreatePreferredStock() {
         final Stock preferedStock = Stock.createPreferredStock("PREF", new BigDecimal("8"), new BigDecimal("100"), new BigDecimal("0.02"));
 
-        assertThat(preferedStock).as("Stock type is common").isInstanceOf(PreferredStock.class)
+        assertThat(preferedStock).as("Stock type is common").isExactlyInstanceOf(PreferredStock.class)
                 .as("Stock Symbol is PREF").hasFieldOrPropertyWithValue("symbol", "PREF")
                 .as("Last Dividend was 8.00").hasFieldOrPropertyWithValue("lastDividend", new BigDecimal("8.00"))
                 .as("Par value is 100.00").hasFieldOrPropertyWithValue("parValue", new BigDecimal("100.00"))
@@ -46,13 +46,13 @@ public class StockTest {
 
     @Test
     public void testCantNotCreateStockWithNullDividend() {
-        assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> Stock.createCommonStock("ZERO", null, new BigDecimal("100")));
+        assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> Stock.createCommonStock("NULL", null, new BigDecimal("100")));
     }
 
     @Test
     public void testCantNotCreateStockBellowMinimumParValue() {
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() ->
-                Stock.createCommonStock("NULL", BigDecimal.ONE, new BigDecimal("0.005")))
+                Stock.createCommonStock("BMPV", BigDecimal.ONE, new BigDecimal("0.005")))
                 .withMessage("Par Value has to be equal or greater than 0.01");
     }
 
@@ -84,8 +84,8 @@ public class StockTest {
     @DataProvider(name = "stocks")
     private Object[][] stocks() {
         return new Object[][]{
-                {"Common", createCommonStock("CZRO", new BigDecimal("8"), new BigDecimal("100"))},
-                {"Preferred", createPreferredStock("PZRO", new BigDecimal("8"), new BigDecimal("100"), new BigDecimal("0.02"))}
+                {"Common", createCommonStock("COMM", new BigDecimal("8"), new BigDecimal("100"))},
+                {"Preferred", createPreferredStock("PREF", new BigDecimal("8"), new BigDecimal("100"), new BigDecimal("0.02"))}
         };
     }
 

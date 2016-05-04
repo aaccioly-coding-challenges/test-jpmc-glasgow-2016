@@ -6,10 +6,14 @@ import lombok.Value;
 
 import java.math.BigDecimal;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.jpmorgan.sssm.math.FixedPointConstants.*;
+import static com.jpmorgan.sssm.math.FixedPointMath.MATH_CONTEXT;
+import static com.jpmorgan.sssm.math.FixedPointMath.MIN_VALUE;
+import static com.jpmorgan.sssm.math.FixedPointMath.PERCENTAGE_SCALE;
+import static com.jpmorgan.sssm.math.FixedPointMath.ROUNDING_MODE;
+import static com.jpmorgan.sssm.math.FixedPointMath.checkArgumentGreaterThanOrEgual;
 
 /**
+ * Represents common stock that may or may not pay dividends.
  * @author Anthony Accioly
  */
 @Value
@@ -22,9 +26,10 @@ final class CommonStock extends Stock {
 
     @Override
     public final BigDecimal getDividendYield(@NotNull BigDecimal price) {
-        checkArgument(price.compareTo(MIN_VALUE) >= 0, MIN_VALUE_MESSAGE, "Price", MIN_VALUE);
+        checkArgumentGreaterThanOrEgual("Price", price, MIN_VALUE);
 
-        return lastDividend.divide(price, MATH_CONTEXT)
-                .setScale(PERCENTAGE_SCALE, ROUNDING_MODE);
+        return getLastDividend().divide(price, MATH_CONTEXT)
+                .setScale(PERCENTAGE_SCALE, ROUNDING_MODE)
+                .stripTrailingZeros();
     }
 }

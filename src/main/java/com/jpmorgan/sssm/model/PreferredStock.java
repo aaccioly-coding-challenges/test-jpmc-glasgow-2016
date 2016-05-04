@@ -6,29 +6,33 @@ import lombok.Value;
 
 import java.math.BigDecimal;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.jpmorgan.sssm.math.FixedPointConstants.*;
+import static com.jpmorgan.sssm.math.FixedPointMath.MATH_CONTEXT;
+import static com.jpmorgan.sssm.math.FixedPointMath.MIN_VALUE;
+import static com.jpmorgan.sssm.math.FixedPointMath.PERCENTAGE_SCALE;
+import static com.jpmorgan.sssm.math.FixedPointMath.ROUNDING_MODE;
+import static com.jpmorgan.sssm.math.FixedPointMath.checkArgumentGreaterThanOrEgual;
 
 /**
+ * Represents preferred stock that always pays dividends according to a fixed percentage of the par value.
  * @author Anthony Accioly
  */
 @Value
 @EqualsAndHashCode(callSuper = true)
 final class PreferredStock extends Stock {
 
-    @NonNull BigDecimal fixedDividend;
+    @NonNull private final BigDecimal fixedDividend;
 
     PreferredStock(String symbol, BigDecimal lastDividend, BigDecimal parValue, BigDecimal fixedDividend) {
         super(symbol, lastDividend, parValue);
-        checkArgument(fixedDividend.compareTo(MIN_VALUE) >= 0, MIN_VALUE_MESSAGE, "Fixed Dividend", MIN_VALUE);
+        checkArgumentGreaterThanOrEgual("Fixed Dividend", fixedDividend, MIN_VALUE);
         this.fixedDividend = fixedDividend.setScale(PERCENTAGE_SCALE, ROUNDING_MODE).stripTrailingZeros();
     }
 
     @Override
     public BigDecimal getDividendYield(BigDecimal price) {
-        checkArgument(price.compareTo(MIN_VALUE) >= 0, MIN_VALUE_MESSAGE, "Price", MIN_VALUE);
+        checkArgumentGreaterThanOrEgual("Price", price, MIN_VALUE);
 
-        return fixedDividend.multiply(parValue, MATH_CONTEXT)
+        return fixedDividend.multiply(getParValue(), MATH_CONTEXT)
                 .divide(price, MATH_CONTEXT)
                 .setScale(PERCENTAGE_SCALE, ROUNDING_MODE);
     }

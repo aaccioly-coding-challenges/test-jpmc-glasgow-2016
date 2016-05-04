@@ -41,9 +41,9 @@ and patterns such as static factory methods are used to hide implementation deta
 
 [![Class Diagram - Stocks][25]][25]
 On the other end of the spectrum it would not make much sense to apply inheritance for different types of `Trade` since
-in SSSM all trades behave the same. A `TradeType` enum discriminator is used instead.
+in SSSM all trades behave the same. A `TradeIndicator` enum discriminator is used instead.
 
-> TODO: include class diagram for trades
+[![Class Diagram - Trades][26]][26]
 
 ### 3. Services and Data
 
@@ -138,6 +138,7 @@ with Lombok.
 [24]: https://projectlombok.org/download.html
 
 [25]: src/main/docs/images/stock_class_diagram.png
+[26]: src/main/docs/images/trade_class_diagram.png
 
 
 
