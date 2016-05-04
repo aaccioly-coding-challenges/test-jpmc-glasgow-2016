@@ -14,6 +14,7 @@ import static com.jpmorgan.sssm.math.FixedPointMath.checkArgumentGreaterThanOrEg
 
 /**
  * Represents preferred stock that always pays dividends according to a fixed percentage of the par value.
+ *
  * @author Anthony Accioly
  */
 @Value
@@ -29,7 +30,7 @@ final class PreferredStock extends Stock {
     }
 
     @Override
-    public BigDecimal getDividendYield(BigDecimal price) {
+    public BigDecimal dividendYield(BigDecimal price) {
         checkArgumentGreaterThanOrEgual("Price", price, MIN_VALUE);
 
         return fixedDividend.multiply(getParValue(), MATH_CONTEXT)
