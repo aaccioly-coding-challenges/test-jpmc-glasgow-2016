@@ -53,7 +53,7 @@ calculating Volume Weighted Stock price and the GBCE specific All Share Index.
 The data itself is written and retrieved using a in memory implementation of `StockRepository`. Internally a
 [MultiMap][6] stores trades for each kind of stock.
 
-> TODO: include class diagram for service and repository
+[![Class Diagram - Service and Repository][27]][27]
 
 Finally, a geometric mean [`Collector`][7] is implemented as an alternative for a private or public static utility
 method in order to comply with the [Simple responsibility principle][8].
@@ -65,8 +65,8 @@ Decimal values are represented with [BigDecimal][9] instead of types like `doubl
 #### Precision and rounding policies:
 
 * Internal computations uses a precision of *30* digits
-* The fractional part of monetary and percentage results are scaled to the second digit
-* The fractional part of percentage results are scaled to the fifth digit
+* The fractional part of monetary values are scaled to the second digit
+* The fractional part of percentage values are scaled to the fifth digit
 
 [`ROUND_HALF_EVEN`][10] policy is used for rounding.
 
@@ -139,6 +139,7 @@ with Lombok.
 
 [25]: src/main/docs/images/stock_class_diagram.png
 [26]: src/main/docs/images/trade_class_diagram.png
+[27]: src/main/docs/images/service_and_repository_class_diagram.png
 
 
 
