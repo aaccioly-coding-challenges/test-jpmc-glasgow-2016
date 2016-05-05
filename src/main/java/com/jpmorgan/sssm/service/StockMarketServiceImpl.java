@@ -1,6 +1,6 @@
 package com.jpmorgan.sssm.service;
 
-import com.jpmorgan.sssm.math.FixedPointMath;
+import com.jpmorgan.sssm.math.BigDecimalSummaryGeometricMean;
 import com.jpmorgan.sssm.model.Stock;
 import com.jpmorgan.sssm.model.Trade;
 import com.jpmorgan.sssm.repository.StockRepository;
@@ -14,8 +14,11 @@ import java.util.stream.Collectors;
 import static com.jpmorgan.sssm.math.FixedPointMath.CURRENCY_SCALE;
 import static com.jpmorgan.sssm.math.FixedPointMath.MATH_CONTEXT;
 import static com.jpmorgan.sssm.math.FixedPointMath.ROUNDING_MODE;
+import static java.math.BigDecimal.ZERO;
 
 /**
+ * Reference Implementation for Stock Market Services.
+ *
  * @author Anthony Accioly
  */
 public final class StockMarketServiceImpl implements StockMarketService {
@@ -39,17 +42,25 @@ public final class StockMarketServiceImpl implements StockMarketService {
 
         final BigDecimal weigthedTotalPrice = trades.stream()
                 .map(share -> share.getPrice().multiply(BigDecimal.valueOf(share.getQuantity()), MATH_CONTEXT))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .reduce(ZERO, BigDecimal::add);
 
         final int totalSharesBought = trades.stream().collect(Collectors.summingInt(Trade::getQuantity));
 
         return weigthedTotalPrice.divide(BigDecimal.valueOf(totalSharesBought), ROUNDING_MODE)
-                .setScale(CURRENCY_SCALE, FixedPointMath.ROUNDING_MODE);
+                .setScale(CURRENCY_SCALE, ROUNDING_MODE);
 
     }
 
     @Override
     public BigDecimal allShareIndex() {
-        throw new UnsupportedOperationException("Not yet implemented");
+        final BigDecimal geometricMean = stockRepository.findAllStocks().stream()
+                // volume weighted price of each stock
+                .map(this::volumeWeightedStockPrice)
+                // Collects statistics
+                .collect(BigDecimalSummaryGeometricMean::new, BigDecimalSummaryGeometricMean::accept, BigDecimalSummaryGeometricMean::combine)
+                // Computes geometric mean
+                .geometricMean();
+
+        return geometricMean.setScale(CURRENCY_SCALE, ROUNDING_MODE);
     }
 }

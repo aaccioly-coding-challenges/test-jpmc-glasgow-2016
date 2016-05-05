@@ -39,11 +39,11 @@ lack of such a requirement inheritance seems like a natural way to design the mo
 [Open/Closed principle][3]. Special care is taken to follow the [Liskov Substitution Principle][4], plus encapsulation
 and patterns such as static factory methods are used to hide implementation details from the API.
 
-[![Class Diagram - Stocks][25]][25]
+[![Class Diagram - Stocks][23]][23]
 On the other end of the spectrum it would not make much sense to apply inheritance for different types of `Trade` since
 in SSSM all trades behave the same. A `TradeIndicator` enum discriminator is used instead.
 
-[![Class Diagram - Trades][26]][26]
+[![Class Diagram - Trades][24]][24]
 
 ### 3. Services and Data
 
@@ -53,9 +53,9 @@ calculating Volume Weighted Stock price and the GBCE specific All Share Index.
 The data itself is written and retrieved using a in memory implementation of `StockRepository`. Internally a
 [MultiMap][6] stores trades for each kind of stock.
 
-[![Class Diagram - Service and Repository][27]][27]
+[![Class Diagram - Service and Repository][25]][25]
 
-Finally, a geometric mean [`Collector`][7] is implemented as an alternative for a private or public static utility
+Finally, a geometric mean summary [`Collector`][7] is implemented as an alternative for a private or public static utility
 method in order to comply with the [Simple responsibility principle][8].
 
 ### 4. Accuracy trumps speed
@@ -70,46 +70,42 @@ Decimal values are represented with [BigDecimal][9] instead of types like `doubl
 
 [`ROUND_HALF_EVEN`][10] policy is used for rounding.
 
-The original [Geometric Mean][11] formula is subject to underflow and overflow problems (the product of several small or
-large products can outgrown the 30 digits precision). This is less likely to occur using the potentially slower
-arithmetic mean of logarithms. In order to strike balance SSSM uses [an algorithm][12] that combines both formulas.
-
 ### 5. Some libraries, no containers
 
 It is certainly possible to design a production quality toy project. On the other hand it is hard to ignore that a large
 enterprise project may call for a different toolset than a self contained exercise.
 
-Tools such as [Spring Boot][13] are able to bootstrap a production grade application with all the bells and whistles in
+Tools such as [Spring Boot][11] are able to bootstrap a production grade application with all the bells and whistles in
 a matter of minutes. Still, I feel that overengineering a toy project to emulate enterprise architecture defeats the
 purpose of the exercise. Thus, while I'm fully aware of the benefits that IoC containers, a bean validation framework
 etc could bring to the project I've chosen to stick with a basic clean design.
 
 This does not mean ignoring tools altogether:
 
-* [Lombok][14] is used to reduce boilerplate code
-* [Guava][15] bring us that extra level of expressiveness with custom collections, preconditions, etc.
-* [SLF4J][16] is used as lightweight logging facade loosely coupled to a [`java.util.logging`][17] implementation.
+* [Lombok][12] is used to reduce boilerplate code
+* [Guava][13] bring us that extra level of expressiveness with custom collections, preconditions, etc.
+* [SLF4J][14] is used as lightweight logging facade loosely coupled to a [`java.util.logging`][15] implementation.
 
 
 ### 6. Testing
 
-A suite of [TestNG][18] unit tests with [AssertJ][19] assertions is provided. [Surefire][20] reports can be generated
+A suite of [TestNG][16] unit tests with [AssertJ][17] assertions is provided. [Surefire][18] reports can be generated
 with:
 
     mvn test
 
-While [Spock][21] was initially considered, the project is still small enough that a complex BDD framework would be
+While [Spock][19] was initially considered, the project is still small enough that a complex BDD framework would be
 overkill. For the same reason automatic coverage, load and acceptance tests were not implemented for this version of the
 software.
 
 How to build
 -------------
 
-In order to build the project [Maven 3][22] and [Oracle JDK 8][24] are required. The project can be built with:
+In order to build the project [Maven 3][20] and [Oracle JDK 8][21] are required. The project can be built with:
 
     mvn clean install
 
-Super Simple Stock Market itself is IDE agnostic. Some IDEs may require [extra configuration][24] in order to play well
+Super Simple Stock Market itself is IDE agnostic. Some IDEs may require [extra configuration][22] in order to play well
 with Lombok.
 
 [1]: https://docs.oracle.com/javase/8/docs/api/java/time/Instant.html
@@ -122,24 +118,22 @@ with Lombok.
 [8]: https://en.wikipedia.org/wiki/Single_responsibility_principle
 [9]: https://docs.oracle.com/javase/8/docs/api/java/math/BigDecimal.html
 [10]: https://docs.oracle.com/javase/8/docs/api/java/math/RoundingMode.html#HALF_EVEN
-[11]: https://en.wikipedia.org/wiki/Geometric_mean
-[12]: http://stackoverflow.com/a/19980705/664577
-[13]: http://projects.spring.io/spring-boot/
-[14]: https://projectlombok.org/
-[15]: https://github.com/google/guava
-[16]: http://www.slf4j.org/
-[17]: https://docs.oracle.com/javase/8/docs/api/java/util/logging/package-summary.html
-[18]: http://testng.org/doc/index.html
-[19]: http://joel-costigliola.github.io/assertj/
-[20]: https://maven.apache.org/surefire/maven-surefire-plugin/
-[21]: https://code.google.com/archive/p/spock/
-[22]: https://maven.apache.org/
-[23]: http://www.oracle.com/technetwork/java/javase/downloads/index.html
-[24]: https://projectlombok.org/download.html
+[11]: http://projects.spring.io/spring-boot/
+[12]: https://projectlombok.org/
+[13]: https://github.com/google/guava
+[14]: http://www.slf4j.org/
+[15]: https://docs.oracle.com/javase/8/docs/api/java/util/logging/package-summary.html
+[16]: http://testng.org/doc/index.html
+[17]: http://joel-costigliola.github.io/assertj/
+[18]: https://maven.apache.org/surefire/maven-surefire-plugin/
+[19]: https://code.google.com/archive/p/spock/
+[20]: https://maven.apache.org/
+[21]: http://www.oracle.com/technetwork/java/javase/downloads/index.html
+[22]: https://projectlombok.org/download.html
 
-[25]: src/main/docs/images/stock_class_diagram.png
-[26]: src/main/docs/images/trade_class_diagram.png
-[27]: src/main/docs/images/service_and_repository_class_diagram.png
+[23]: src/main/docs/images/stock_class_diagram.png
+[24]: src/main/docs/images/trade_class_diagram.png
+[25]: src/main/docs/images/service_and_repository_class_diagram.png
 
 
 
