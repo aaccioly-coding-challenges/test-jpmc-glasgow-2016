@@ -1,7 +1,7 @@
 package com.jpmorgan.sssm.model;
 
-import com.sun.istack.internal.NotNull;
 import lombok.EqualsAndHashCode;
+import lombok.NonNull;
 import lombok.Value;
 
 import java.math.BigDecimal;
@@ -14,6 +14,7 @@ import static com.jpmorgan.sssm.math.FixedPointMath.checkArgumentGreaterThanOrEg
 
 /**
  * Represents common stock that may or may not pay dividends.
+ *
  * @author Anthony Accioly
  */
 @Value
@@ -25,7 +26,7 @@ final class CommonStock extends Stock {
     }
 
     @Override
-    public final BigDecimal getDividendYield(@NotNull BigDecimal price) {
+    public final BigDecimal dividendYield(@NonNull BigDecimal price) {
         checkArgumentGreaterThanOrEgual("Price", price, MIN_VALUE);
 
         return getLastDividend().divide(price, MATH_CONTEXT)

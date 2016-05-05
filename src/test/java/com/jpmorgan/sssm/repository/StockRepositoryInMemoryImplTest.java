@@ -2,13 +2,19 @@ package com.jpmorgan.sssm.repository;
 
 import com.jpmorgan.sssm.model.Stock;
 import com.jpmorgan.sssm.model.Trade;
+import com.jpmorgan.sssm.model.TradeIndicator;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.math.BigDecimal;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Collection;
+import java.util.Set;
 
 import static com.jpmorgan.sssm.model.Stock.createCommonStock;
 import static com.jpmorgan.sssm.model.Trade.buyNow;
+import static com.jpmorgan.sssm.model.Trade.createOrder;
 import static com.jpmorgan.sssm.model.Trade.sellNow;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -73,6 +79,60 @@ public class StockRepositoryInMemoryImplTest {
         final StockRepository repository = StockRepositoryInMemoryImpl.getInstance();
 
         assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> repository.record(null));
+    }
+
+    @Test
+    public void testCanRetrieveTradesForStockOverThePastFiveMinutes() {
+        final StockRepository repository = StockRepositoryInMemoryImpl.getInstance();
+        final Stock stock = createCommonStock("STCK", new BigDecimal("2"), new BigDecimal("80"));
+        // 1 hour and a half ago
+        final Instant oldTradeTimeStamp = Instant.now().minus(Duration.ofHours(1).plusMinutes(30));
+        final Trade oldTrade = createOrder(stock, oldTradeTimeStamp, 15, TradeIndicator.BUY, new BigDecimal("1500.00"));
+        // 2 minutes ago
+        final Instant recentTradeTimeStamp = Instant.now().minus(Duration.ofMinutes(2));
+        final Trade recentTrade = createOrder(stock, recentTradeTimeStamp, 20, TradeIndicator.BUY, new BigDecimal("2000.00"));
+        // Right now
+        final Trade veryRecentTrade = buyNow(stock, 5, new BigDecimal("500.00"));
+
+        repository.record(oldTrade);
+        repository.record(recentTrade);
+        repository.record(veryRecentTrade);
+
+        final Instant fiveMinutesAgo = Instant.now().minus(Duration.ofMinutes(5));
+        final Collection<Trade> tradesOnTimeHorizon = repository.findTradesByStockSinceInstant(stock, fiveMinutesAgo);
+
+        assertThat(tradesOnTimeHorizon)
+                .as("Has expected size").hasSize(2)
+                .as("Contains only recent trades").contains(recentTrade, veryRecentTrade)
+                .as("Doesn't contain old trades ").doesNotContain(oldTrade)
+                .as("Only contains trades in the past 5 minutes").extracting(Trade::getTimestamp).allMatch(t -> t.isAfter(fiveMinutesAgo));
+
+    }
+
+    @Test
+    public void testReturnsEmptySetIfStockHasNoTrades() {
+        final StockRepository repository = StockRepositoryInMemoryImpl.getInstance();
+        final Stock stock = createCommonStock("PHANT", new BigDecimal("4"), new BigDecimal("150"));
+
+        assertThat(repository.findTradesByStock(stock)).isEmpty();
+        assertThat(repository.findTradesByStockSinceInstant(stock, Instant.now())).isEmpty();
+    }
+
+    @Test
+    public void canNotModifyTheStockMarketUsingReturnedViews() {
+        final StockRepository repository = StockRepositoryInMemoryImpl.getInstance();
+        final Stock sneakyStock = createCommonStock("SNEKY", new BigDecimal("0.6"), new BigDecimal("66"));
+        final Trade sneakyTrade = buyNow(sneakyStock, 1000, new BigDecimal("0.01"));
+
+        final Instant fiveMinutesAgo = Instant.now().minus(Duration.ofMinutes(5));
+
+        final Set<Stock> tradedStocksView = repository.findAllStocks();
+        final Collection<Trade> tradesForStockView = repository.findTradesByStock(sneakyStock);
+        final Collection<Trade> recentTradesForStockView = repository.findTradesByStockSinceInstant(sneakyStock, fiveMinutesAgo);
+
+        assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> tradedStocksView.add(sneakyStock));
+        assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> tradesForStockView.add(sneakyTrade));
+        assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> recentTradesForStockView.add(sneakyTrade));
     }
 
 }

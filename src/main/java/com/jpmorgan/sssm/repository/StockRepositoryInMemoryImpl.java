@@ -51,13 +51,13 @@ public final class StockRepositoryInMemoryImpl implements StockRepository {
 
     @Override
     public Collection<Trade> findTradesByStockSinceInstant(@NonNull Stock stock, @NonNull Instant instant) {
-        return tradingHistory.get(stock).stream()
+        return Collections.unmodifiableCollection(tradingHistory.get(stock).stream()
                 .filter(trade -> trade.getTimestamp().isAfter(instant))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
     }
 
     @VisibleForTesting
-    void clearHistory() {
+    public void clearHistory() {
         tradingHistory.clear();
     }
 

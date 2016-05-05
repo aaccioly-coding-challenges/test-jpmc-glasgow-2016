@@ -67,7 +67,7 @@ public class StockTest {
     public void testGetDividendYieldForCommonStock() {
         final Stock commonStock = createCommonStock("ALE", new BigDecimal("23"), new BigDecimal("60"));
 
-        assertThat(commonStock.getDividendYield(new BigDecimal("60")))
+        assertThat(commonStock.dividendYield(new BigDecimal("60")))
                 .as("Is around 0.38").isCloseTo(new BigDecimal("0.38"), offset(new BigDecimal("0.01")))
                 .as("Has been rounded precisely to the fifth digit").isEqualByComparingTo(new BigDecimal("0.38333"));
     }
@@ -76,7 +76,7 @@ public class StockTest {
     public void testGetDividendYieldForPreferredStock() {
         final Stock preferredStock = createPreferredStock("GIN", new BigDecimal("8"), new BigDecimal("100"), new BigDecimal("0.02"));
 
-        assertThat(preferredStock.getDividendYield(new BigDecimal("90")))
+        assertThat(preferredStock.dividendYield(new BigDecimal("90")))
                 .as("Is around 0.02").isCloseTo(new BigDecimal("0.02"), offset(new BigDecimal("0.01")))
                 .as("Has been rounded precisely to the fifth digit").isEqualByComparingTo(new BigDecimal("0.02222"));
     }
@@ -91,7 +91,7 @@ public class StockTest {
 
     @Test(dataProvider = "stocks")
     public void testCanNoGetDividendYieldForPriceBellowMinimum(String stockType, Stock stock) {
-        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> stock.getDividendYield(new BigDecimal("0.00001")))
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> stock.dividendYield(new BigDecimal("0.00001")))
                 .as("%s stock exception has expected message", stockType).withMessage("Price has to be equal or greater than 0.01");
 
     }
@@ -102,9 +102,9 @@ public class StockTest {
         final Stock expensiveStock = createCommonStock("EXPS", new BigDecimal("0.05"), new BigDecimal("10000"));
 
         final SoftAssertions sofly = new SoftAssertions();
-        sofly.assertThat(cheapStock.getPriceToEarningsRatio(new BigDecimal("0.05")))
+        sofly.assertThat(cheapStock.priceToEarningsRatio(new BigDecimal("0.05")))
                 .as("PE/Ratio for cheap stock with high dividend is low").isEqualByComparingTo(new BigDecimal("0.00005"));
-        sofly.assertThat(expensiveStock.getPriceToEarningsRatio(new BigDecimal("10000")))
+        sofly.assertThat(expensiveStock.priceToEarningsRatio(new BigDecimal("10000")))
                 .as("PE/Ratio for expensive stock with lowis high").isEqualByComparingTo(new BigDecimal("200000"));
 
         sofly.assertAll();
@@ -114,13 +114,13 @@ public class StockTest {
     public void testCanNotGetPriceToEarningRatioOnZeroDividend() throws Exception {
         final Stock zeroDividendStock = createCommonStock("ZERO", BigDecimal.ZERO, new BigDecimal("100"));
         assertThatExceptionOfType(IllegalStateException.class)
-                .isThrownBy(() -> zeroDividendStock.getPriceToEarningsRatio(BigDecimal.ONE))
+                .isThrownBy(() -> zeroDividendStock.priceToEarningsRatio(BigDecimal.ONE))
                 .withMessage("No reported dividends for last period, can't compute PE/Ratio");
     }
 
     @Test(dataProvider = "stocks")
     public void testCanNoGetPriceToEarningRatioOnPriceBellowMinimum(String stockType, Stock stock) {
-        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> stock.getPriceToEarningsRatio(new BigDecimal("0.00001")))
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> stock.priceToEarningsRatio(new BigDecimal("0.00001")))
                 .as("%s stock exception has expected message", stockType).withMessage("Price has to be equal or greater than 0.01");
     }
 

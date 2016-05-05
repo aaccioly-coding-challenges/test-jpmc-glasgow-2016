@@ -55,7 +55,7 @@ public abstract class Stock {
      *
      * @see <a href="http://www.investopedia.com/terms/d/dividendyield.asp">Price-Earnings Ratio (P/E Ratio) Definition | Investopedia</a>
      */
-    public abstract BigDecimal getDividendYield(@NonNull  BigDecimal price);
+    public abstract BigDecimal dividendYield(@NonNull  BigDecimal price);
 
     /**
      * Given any {@code price} as input, calculates the P/E Ratio.
@@ -74,7 +74,7 @@ public abstract class Stock {
      *
      * @see <a href="http://www.investopedia.com/terms/p/price-earningsratio.asp">Price-Earnings Ratio (P/E Ratio) Definition | Investopedia</a>
      */
-    public BigDecimal getPriceToEarningsRatio(@NonNull BigDecimal price) {
+    public BigDecimal priceToEarningsRatio(@NonNull BigDecimal price) {
         checkArgumentGreaterThanOrEgual("Price", price, MIN_VALUE);
         checkState(lastDividend.compareTo(ZERO) > 0, "No reported dividends for last period, can't compute PE/Ratio");
 

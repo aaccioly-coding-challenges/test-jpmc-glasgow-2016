@@ -21,7 +21,7 @@ public interface StockRepository {
      *
      * @param trade the trade to be recorded.
      */
-    void record(Trade trade);
+    void record(@NonNull Trade trade);
 
     /**
      * Returns all stocks traded in Global Beverage Corporation Exchange stock market.
