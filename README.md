@@ -40,6 +40,7 @@ lack of such requirements, inheritance seems like a natural way to design the mo
 and patterns such as static factory methods are used to hide implementation details from the API.
 
 [![Class Diagram - Stocks][23]][23]
+
 On the other end of the spectrum, it would not make much sense to apply inheritance for different types of `Trade` since
 in SSSM all trades behave the same. A `TradeIndicator` enum discriminator is used instead.
 
